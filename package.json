@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
+    "start": "serve -s dist -l ${PORT:-4173}",
     "server": "npm --prefix server run dev",
     "server:install": "npm --prefix server install",
     "server:seed": "npm --prefix server run seed",
@@ -30,6 +31,7 @@
     "concurrently": "^10.0.5",
     "oxlint": "^1.79.0",
     "postcss": "^8.5.28",
+    "serve": "^14.2.6",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
     "vite": "^8.2.2"
