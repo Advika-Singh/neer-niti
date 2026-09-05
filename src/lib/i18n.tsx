@@ -174,6 +174,41 @@ interface Translations {
   sms_normal: string;
 
   listen: string;
+
+  auth_login_tab: string;
+  auth_register_tab: string;
+  auth_full_name_ph: string;
+  auth_phone_ph: string;
+  auth_password_ph: string;
+  auth_please_wait: string;
+  auth_logout: string;
+  auth_generic_error: string;
+  loan_login_title: string;
+  loan_login_subtitle: string;
+  admin_login_title: string;
+  admin_login_subtitle: string;
+  admin_not_admin: string;
+
+  loan_parametric_badge: string;
+  dash_payout_banner: string;
+  dash_live_data_note: string;
+  dash_fallback_data_note: string;
+
+  admin_payout_triggers_heading: string;
+  admin_api_heading: string;
+  admin_api_desc: string;
+  admin_api_owner_name: string;
+  admin_api_owner_type: string;
+  admin_api_owner_name_ph: string;
+  admin_api_issue: string;
+  admin_api_revoke: string;
+  admin_api_revoked: string;
+  owner_type_insurer: string;
+  owner_type_government: string;
+  owner_type_research: string;
+  common_loading: string;
+  admin_api_issue_error: string;
+  dash_forecast_method_desc: string;
 }
 
 export type TKey = keyof Translations;
@@ -354,6 +389,44 @@ const EN: Translations = {
   sms_normal: "NEER-NITI: {district} rainfall tracking near normal (SPEI {spei}). No action needed this week.",
 
   listen: "Listen",
+
+  auth_login_tab: "Log in",
+  auth_register_tab: "Create account",
+  auth_full_name_ph: "Full name",
+  auth_phone_ph: "10-digit mobile number",
+  auth_password_ph: "Password",
+  auth_please_wait: "Please wait…",
+  auth_logout: "Log out ({name})",
+  auth_generic_error: "Something went wrong. Please try again.",
+  loan_login_title: "Log in to apply",
+  loan_login_subtitle: "Create a free farmer account or log in to submit and track loan applications.",
+  admin_login_title: "Admin sign-in",
+  admin_login_subtitle: "Log in with an admin account to view the operations dashboard.",
+  admin_not_admin: "Signed in as {name}, but this account doesn't have admin access.",
+
+  loan_parametric_badge: "Parametric payout triggered for this district — no claims process needed",
+  dash_payout_banner:
+    "Parametric payout triggered for {district} — SPEI {spei} crossed the {threshold} threshold on {date}. Pending loans here are auto fast-tracked.",
+  dash_live_data_note: "Computed from live Open-Meteo/ERA5 data",
+  dash_fallback_data_note: "Offline calibrated estimate — live feed unreachable",
+
+  admin_payout_triggers_heading: "Parametric payout triggers (index-based, auto-fired from live SPEI)",
+  admin_api_heading: "B2B risk API keys (insurers / government)",
+  admin_api_desc:
+    "Issue an X-API-Key credential for the per-district risk API (/api/v1/risk) — the SaaS side of the business model.",
+  admin_api_owner_name: "Owner name",
+  admin_api_owner_type: "Owner type",
+  admin_api_owner_name_ph: "e.g. Bajaj Allianz",
+  admin_api_issue: "Issue key",
+  admin_api_revoke: "Revoke",
+  admin_api_revoked: "Revoked",
+  owner_type_insurer: "Insurer",
+  owner_type_government: "Government",
+  owner_type_research: "Research",
+  common_loading: "Loading…",
+  admin_api_issue_error: "Could not issue key",
+  dash_forecast_method_desc:
+    "Damped linear trend on the last 3 months of trailing 3-month SPEI, reverting toward the climatological mean (Holt-style damping, reversion weight 0.25 at t+1 and 0.55 at t+3).",
 };
 
 const HI: Translations = {
@@ -529,6 +602,43 @@ const HI: Translations = {
   sms_normal: "NEER-NITI: {district} में वर्षा सामान्य के करीब है (SPEI {spei})। इस सप्ताह कोई कार्रवाई आवश्यक नहीं।",
 
   listen: "सुनें",
+
+  auth_login_tab: "लॉग इन करें",
+  auth_register_tab: "खाता बनाएं",
+  auth_full_name_ph: "पूरा नाम",
+  auth_phone_ph: "10-अंकीय मोबाइल नंबर",
+  auth_password_ph: "पासवर्ड",
+  auth_please_wait: "कृपया प्रतीक्षा करें…",
+  auth_logout: "लॉग आउट ({name})",
+  auth_generic_error: "कुछ गलत हो गया। कृपया पुनः प्रयास करें।",
+  loan_login_title: "आवेदन के लिए लॉग इन करें",
+  loan_login_subtitle: "ऋण आवेदन जमा करने और ट्रैक करने के लिए नि:शुल्क किसान खाता बनाएं या लॉग इन करें।",
+  admin_login_title: "एडमिन साइन-इन",
+  admin_login_subtitle: "संचालन डैशबोर्ड देखने के लिए एडमिन खाते से लॉग इन करें।",
+  admin_not_admin: "{name} के रूप में साइन इन किया गया, लेकिन इस खाते में एडमिन एक्सेस नहीं है।",
+
+  loan_parametric_badge: "इस जिले के लिए पैरामेट्रिक भुगतान सक्रिय — दावा प्रक्रिया की आवश्यकता नहीं",
+  dash_payout_banner:
+    "{district} के लिए पैरामेट्रिक भुगतान सक्रिय हुआ — SPEI {spei} ने {date} को {threshold} सीमा पार की। यहां लंबित ऋण स्वतः तेज़ किए गए हैं।",
+  dash_live_data_note: "लाइव Open-Meteo/ERA5 डेटा से गणना की गई",
+  dash_fallback_data_note: "ऑफ़लाइन कैलिब्रेटेड अनुमान — लाइव फ़ीड अनुपलब्ध",
+
+  admin_payout_triggers_heading: "पैरामेट्रिक भुगतान ट्रिगर (इंडेक्स-आधारित, लाइव SPEI से स्वतः सक्रिय)",
+  admin_api_heading: "B2B जोखिम API कुंजियां (बीमाकर्ता / सरकार)",
+  admin_api_desc: "प्रति-जिला जोखिम API (/api/v1/risk) के लिए X-API-Key क्रेडेंशियल जारी करें — व्यापार मॉडल का SaaS पक्ष।",
+  admin_api_owner_name: "स्वामी का नाम",
+  admin_api_owner_type: "स्वामी प्रकार",
+  admin_api_owner_name_ph: "उदा. बजाज आलियांज़",
+  admin_api_issue: "कुंजी जारी करें",
+  admin_api_revoke: "रद्द करें",
+  admin_api_revoked: "रद्द",
+  owner_type_insurer: "बीमाकर्ता",
+  owner_type_government: "सरकार",
+  owner_type_research: "शोध",
+  common_loading: "लोड हो रहा है…",
+  admin_api_issue_error: "कुंजी जारी नहीं हो सकी",
+  dash_forecast_method_desc:
+    "पिछले 3 महीनों के 3-माह ट्रेलिंग SPEI पर आधारित डैम्प्ड लीनियर ट्रेंड, जलवायु औसत की ओर लौटते हुए (Holt-शैली डैम्पिंग, t+1 पर 0.25 और t+3 पर 0.55 का रिवर्जन भार)।",
 };
 
 const TA: Translations = {
@@ -705,6 +815,43 @@ const TA: Translations = {
   sms_normal: "NEER-NITI: {district} இல் மழைப்பொழிவு சாதாரண நிலையில் உள்ளது (SPEI {spei}). இந்த வாரம் நடவடிக்கை தேவையில்லை.",
 
   listen: "கேளுங்கள்",
+
+  auth_login_tab: "உள்நுழையவும்",
+  auth_register_tab: "கணக்கை உருவாக்கவும்",
+  auth_full_name_ph: "முழுப் பெயர்",
+  auth_phone_ph: "10-இலக்க மொபைல் எண்",
+  auth_password_ph: "கடவுச்சொல்",
+  auth_please_wait: "காத்திருக்கவும்…",
+  auth_logout: "வெளியேறு ({name})",
+  auth_generic_error: "ஏதோ தவறு நடந்தது. மீண்டும் முயற்சிக்கவும்.",
+  loan_login_title: "விண்ணப்பிக்க உள்நுழையவும்",
+  loan_login_subtitle: "கடன் விண்ணப்பங்களைச் சமர்ப்பிக்கவும் கண்காணிக்கவும் இலவச விவசாயி கணக்கை உருவாக்கவும் அல்லது உள்நுழையவும்.",
+  admin_login_title: "நிர்வாக உள்நுழைவு",
+  admin_login_subtitle: "செயல்பாட்டு டாஷ்போர்டைப் பார்க்க நிர்வாகக் கணக்குடன் உள்நுழையவும்.",
+  admin_not_admin: "{name} ஆக உள்நுழைந்துள்ளீர்கள், ஆனால் இந்தக் கணக்குக்கு நிர்வாக அணுகல் இல்லை.",
+
+  loan_parametric_badge: "இந்த மாவட்டத்திற்கு பாராமெட்ரிக் கொடுப்பனவு தூண்டப்பட்டது — உரிமைகோரல் செயல்முறை தேவையில்லை",
+  dash_payout_banner:
+    "{district}-க்கு பாராமெட்ரிக் கொடுப்பனவு தூண்டப்பட்டது — SPEI {spei}, {date} அன்று {threshold} வரம்பைக் கடந்தது. இங்குள்ள நிலுவைக் கடன்கள் தானாக விரைவுபடுத்தப்படும்.",
+  dash_live_data_note: "நேரடி Open-Meteo/ERA5 தரவிலிருந்து கணக்கிடப்பட்டது",
+  dash_fallback_data_note: "ஆஃப்லைன் அளவீடு மதிப்பீடு — நேரடி ஊட்டம் அணுக முடியவில்லை",
+
+  admin_payout_triggers_heading: "பாராமெட்ரிக் கொடுப்பனவு தூண்டல்கள் (குறியீடு அடிப்படையிலான, நேரடி SPEI-ஆல் தானாக தூண்டப்படும்)",
+  admin_api_heading: "B2B ஆபத்து API சாவிகள் (காப்பீட்டாளர்கள் / அரசு)",
+  admin_api_desc: "மாவட்டவாரி ஆபத்து API-க்கு (/api/v1/risk) X-API-Key வழங்கவும் — வணிக மாதிரியின் SaaS பகுதி.",
+  admin_api_owner_name: "உரிமையாளர் பெயர்",
+  admin_api_owner_type: "உரிமையாளர் வகை",
+  admin_api_owner_name_ph: "எ.கா. பஜாஜ் அலியன்ஸ்",
+  admin_api_issue: "சாவியை வழங்கு",
+  admin_api_revoke: "ரத்து செய்",
+  admin_api_revoked: "ரத்து செய்யப்பட்டது",
+  owner_type_insurer: "காப்பீட்டாளர்",
+  owner_type_government: "அரசு",
+  owner_type_research: "ஆய்வு",
+  common_loading: "ஏற்றப்படுகிறது…",
+  admin_api_issue_error: "சாவியை வழங்க முடியவில்லை",
+  dash_forecast_method_desc:
+    "கடந்த 3 மாதங்களின் 3-மாத டிரெய்லிங் SPEI அடிப்படையிலான டேம்ப்டு லீனியர் ட்ரெண்ட், காலநிலை சராசரிக்குத் திரும்புகிறது (Holt-பாணி டேம்பிங், t+1 இல் 0.25 மற்றும் t+3 இல் 0.55 மறுசீரமைப்பு எடை).",
 };
 
 const DICT: Record<Lang, Translations> = { en: EN, hi: HI, ta: TA };

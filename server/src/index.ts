@@ -1,6 +1,8 @@
 import http from "node:http";
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 import { config } from "./config.js";
 import "./db.js";
 import { districtsRouter } from "./routes/districts.js";
@@ -17,14 +19,29 @@ import { DISTRICTS } from "./lib/districts.js";
 import { attachWebSocketServer, broadcastPayoutEvent, broadcastSensorTick } from "./ws.js";
 
 const app = express();
+// Railway/Render sit behind a reverse proxy — trust the first hop's X-Forwarded-For
+// so req.ip (and therefore rate limiting) reflects the real client, not the proxy.
+app.set("trust proxy", 1);
+
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors({ origin: config.corsOrigin }));
 app.use(express.json());
+
+const generalLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 600, standardHeaders: true, legacyHeaders: false });
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many attempts. Please try again later." },
+});
+app.use("/api", generalLimiter);
 
 app.get("/api/health", (_req, res) => res.json({ ok: true, service: "neer-niti-server" }));
 
 app.use("/api/districts", districtsRouter);
 app.use("/api/news", newsRouter);
-app.use("/api/auth", authRouter);
+app.use("/api/auth", authLimiter, authRouter);
 app.use("/api/loans", loansRouter);
 app.use("/api/payouts", payoutsRouter);
 app.use("/api/admin/api-keys", apiKeysRouter);

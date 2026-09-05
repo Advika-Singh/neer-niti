@@ -42,12 +42,16 @@ export function useMonthlyRainfall(districtId: string) {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    apiGetRainfall(districtId).then((data) => {
-      if (!cancelled) {
-        setRainfall(data);
-        setLoading(false);
-      }
-    });
+    apiGetRainfall(districtId)
+      .then((data) => {
+        if (!cancelled) setRainfall(data);
+      })
+      .catch(() => {
+        if (!cancelled) setRainfall([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
     return () => {
       cancelled = true;
     };

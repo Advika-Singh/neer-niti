@@ -127,17 +127,14 @@ export default function Loans() {
             onClick={logout}
             className="flex items-center gap-1.5 rounded-full border border-black/10 px-3 py-1.5 text-xs font-medium text-brand-900/60 hover:bg-white"
           >
-            <LogOut size={13} /> Log out ({user?.name})
+            <LogOut size={13} /> {tf("auth_logout", { name: user?.name ?? "" })}
           </button>
         )}
       </div>
 
       {!isAuthenticated ? (
         <div className="mt-8">
-          <LoginForm
-            title="Log in to apply"
-            subtitle="Create a free farmer account or log in to submit and track loan applications."
-          />
+          <LoginForm title={t("loan_login_title")} subtitle={t("loan_login_subtitle")} />
         </div>
       ) : (
         <div className="mt-6 grid gap-6 lg:grid-cols-5">
@@ -303,7 +300,7 @@ export default function Loans() {
                     )}
                     {app.parametricEligible && (
                       <p className="mt-1 flex items-center gap-1 text-xs font-medium text-brand-700">
-                        <Zap size={11} /> Parametric payout triggered for this district — no claims process needed
+                        <Zap size={11} /> {t("loan_parametric_badge")}
                       </p>
                     )}
                   </div>

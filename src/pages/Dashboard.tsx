@@ -20,7 +20,7 @@ import SmsPreview from "../components/SmsPreview";
 import { RISK_KEY, useLanguage } from "../lib/i18n";
 
 export default function Dashboard() {
-  const { t } = useLanguage();
+  const { t, tf } = useLanguage();
   const { readings } = useLiveSensors();
   const { risk } = useAllDistrictsRisk();
   const [selected, setSelected] = useState(DISTRICTS[0].id);
@@ -80,8 +80,12 @@ export default function Dashboard() {
         <div className="mt-4 flex items-center gap-2 rounded-2xl border border-drought-100 bg-drought-50 px-4 py-3 text-sm text-drought-700">
           <Zap size={16} className="shrink-0" />
           <span>
-            <strong>Parametric payout triggered</strong> for {district.name} — SPEI {payoutEvent.spei} crossed the{" "}
-            {payoutEvent.threshold} threshold on {new Date(payoutEvent.triggeredAt).toLocaleDateString()}. Pending loans here are auto fast-tracked.
+            {tf("dash_payout_banner", {
+              district: district.name,
+              spei: payoutEvent.spei,
+              threshold: payoutEvent.threshold,
+              date: new Date(payoutEvent.triggeredAt).toLocaleDateString(),
+            })}
           </span>
         </div>
       )}
@@ -107,7 +111,7 @@ export default function Dashboard() {
           </div>
           {idx && (
             <p className="mt-3 text-[11px] text-brand-900/40">
-              {idx.dataSource === "live" ? "Computed from live Open-Meteo/ERA5 data" : "Offline calibrated estimate — live feed unreachable"}
+              {idx.dataSource === "live" ? t("dash_live_data_note") : t("dash_fallback_data_note")}
             </p>
           )}
         </div>
@@ -124,7 +128,7 @@ export default function Dashboard() {
               <p className="text-2xl font-bold text-brand-900">{idx?.forecastT3 ?? "—"}</p>
             </div>
           </div>
-          <p className="mt-3 text-xs text-brand-900/50">{idx?.forecastMethod ?? t("dash_forecast_note")}</p>
+          <p className="mt-3 text-xs text-brand-900/50">{idx ? t("dash_forecast_method_desc") : t("dash_forecast_note")}</p>
         </div>
 
         <div className="rounded-2xl border border-black/5 bg-white p-5 shadow-sm">

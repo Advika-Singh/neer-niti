@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { ClipboardList, HandCoins, Key, LogOut, ShieldCheck, Trash2, Zap } from "lucide-react";
 import { DISTRICTS } from "../lib/districts";
 import { RISK_COLORS, RISK_ORDER } from "../lib/sensorEngine";
@@ -20,8 +21,14 @@ import LoginForm from "../components/LoginForm";
 
 const STATUS_ORDER: LoanApplication["status"][] = ["Pending", "Under Review", "Approved", "Disbursed"];
 
+const OWNER_TYPE_KEY: Record<ApiKeyRecord["owner_type"], "owner_type_insurer" | "owner_type_government" | "owner_type_research"> = {
+  insurer: "owner_type_insurer",
+  government: "owner_type_government",
+  research: "owner_type_research",
+};
+
 export default function Admin() {
-  const { t } = useLanguage();
+  const { t, tf } = useLanguage();
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
   const { risk } = useAllDistrictsRisk();
   const [data, setData] = useState<AdminLoansResponse | null>(null);
@@ -66,7 +73,7 @@ export default function Admin() {
       setIssuedKey(record.key);
       setNewKeyOwner("");
     } catch (err) {
-      setKeyError(err instanceof ApiError ? err.message : "Could not issue key");
+      setKeyError(err instanceof ApiError ? err.message : t("admin_api_issue_error"));
     }
   }
 
@@ -78,7 +85,7 @@ export default function Admin() {
   if (!isAuthenticated) {
     return (
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <LoginForm title="Admin sign-in" subtitle="Log in with an admin account to view the operations dashboard." />
+        <LoginForm title={t("admin_login_title")} subtitle={t("admin_login_subtitle")} />
       </div>
     );
   }
@@ -87,7 +94,7 @@ export default function Admin() {
     return (
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <p className="rounded-2xl border border-dashed border-black/10 bg-white p-8 text-center text-sm text-brand-900/60">
-          Signed in as {user?.name}, but this account doesn't have admin access.
+          {tf("admin_not_admin", { name: user?.name ?? "" })}
         </p>
       </div>
     );
@@ -123,7 +130,7 @@ export default function Admin() {
           onClick={logout}
           className="flex items-center gap-1.5 rounded-full border border-black/10 px-3 py-1.5 text-xs font-medium text-brand-900/60 hover:bg-white"
         >
-          <LogOut size={13} /> Log out ({user?.name})
+          <LogOut size={13} /> {tf("auth_logout", { name: user?.name ?? "" })}
         </button>
       </div>
 
@@ -137,7 +144,7 @@ export default function Admin() {
       {payoutEvents.length > 0 && (
         <div className="mt-6 rounded-2xl border border-drought-100 bg-drought-50 p-5 shadow-sm">
           <p className="flex items-center gap-2 text-sm font-semibold text-drought-700">
-            <Zap size={15} /> Parametric payout triggers (index-based, auto-fired from live SPEI)
+            <Zap size={15} /> {t("admin_payout_triggers_heading")}
           </p>
           <div className="mt-3 space-y-2">
             {payoutEvents.slice(0, 5).map((ev) => (
@@ -152,7 +159,11 @@ export default function Admin() {
 
       {(stats?.total ?? 0) === 0 ? (
         <p className="mt-6 rounded-xl border border-dashed border-black/10 bg-white p-8 text-center text-sm text-brand-900/50">
-          {t("admin_empty_pre")} the loans page {t("admin_empty_post")}
+          {t("admin_empty_pre")}{" "}
+          <Link to="/loans" className="font-medium text-brand-600 hover:underline">
+            {t("admin_empty_link")}
+          </Link>{" "}
+          {t("admin_empty_post")}
         </p>
       ) : (
         <div className="mt-6 rounded-2xl border border-black/5 bg-white p-5 shadow-sm">
@@ -200,7 +211,7 @@ export default function Admin() {
                         <span className={`h-1.5 w-1.5 rounded-full ${c.dot}`} /> {t(RISK_KEY[idx.risk])}
                       </span>
                     ) : (
-                      <span className="text-xs text-brand-900/40">Loading…</span>
+                      <span className="text-xs text-brand-900/40">{t("common_loading")}</span>
                     )}
                   </td>
                   <td className="px-4 py-3 font-mono text-brand-900/75">{idx?.spei ?? "—"}</td>
@@ -215,33 +226,31 @@ export default function Admin() {
 
       <div className="mt-6 rounded-2xl border border-black/5 bg-white p-5 shadow-sm">
         <p className="flex items-center gap-2 text-sm font-semibold text-brand-900">
-          <Key size={15} /> B2B risk API keys (insurers / government)
+          <Key size={15} /> {t("admin_api_heading")}
         </p>
-        <p className="mt-1 text-xs text-brand-900/50">
-          Issue an X-API-Key credential for the per-district risk API (/api/v1/risk) — the SaaS side of the business model.
-        </p>
+        <p className="mt-1 text-xs text-brand-900/50">{t("admin_api_desc")}</p>
 
         <form onSubmit={issueKey} className="mt-4 flex flex-wrap items-end gap-3">
           <label className="text-sm">
-            <span className="mb-1 block text-xs font-medium text-brand-900/70">Owner name</span>
+            <span className="mb-1 block text-xs font-medium text-brand-900/70">{t("admin_api_owner_name")}</span>
             <input
               required
               value={newKeyOwner}
               onChange={(e) => setNewKeyOwner(e.target.value)}
-              placeholder="e.g. Bajaj Allianz"
+              placeholder={t("admin_api_owner_name_ph")}
               className="input"
             />
           </label>
           <label className="text-sm">
-            <span className="mb-1 block text-xs font-medium text-brand-900/70">Owner type</span>
+            <span className="mb-1 block text-xs font-medium text-brand-900/70">{t("admin_api_owner_type")}</span>
             <select value={newKeyType} onChange={(e) => setNewKeyType(e.target.value as ApiKeyRecord["owner_type"])} className="input">
-              <option value="insurer">Insurer</option>
-              <option value="government">Government</option>
-              <option value="research">Research</option>
+              <option value="insurer">{t("owner_type_insurer")}</option>
+              <option value="government">{t("owner_type_government")}</option>
+              <option value="research">{t("owner_type_research")}</option>
             </select>
           </label>
           <button type="submit" className="rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">
-            Issue key
+            {t("admin_api_issue")}
           </button>
         </form>
         {keyError && <p className="mt-2 text-sm text-red-600">{keyError}</p>}
@@ -253,14 +262,14 @@ export default function Admin() {
           {apiKeys.map((k) => (
             <div key={k.id} className="flex items-center justify-between gap-3 rounded-xl bg-earth-50 p-3 text-sm">
               <div>
-                <p className="font-medium text-brand-900">{k.owner_name} <span className="text-xs font-normal text-brand-900/50">({k.owner_type})</span></p>
+                <p className="font-medium text-brand-900">{k.owner_name} <span className="text-xs font-normal text-brand-900/50">({t(OWNER_TYPE_KEY[k.owner_type])})</span></p>
                 <p className="font-mono text-xs text-brand-900/50">{k.key.slice(0, 16)}…</p>
               </div>
               {k.revoked ? (
-                <span className="text-xs text-brand-900/40">Revoked</span>
+                <span className="text-xs text-brand-900/40">{t("admin_api_revoked")}</span>
               ) : (
                 <button onClick={() => revokeKey(k.id)} className="flex items-center gap-1 text-xs text-red-600 hover:underline">
-                  <Trash2 size={12} /> Revoke
+                  <Trash2 size={12} /> {t("admin_api_revoke")}
                 </button>
               )}
             </div>
