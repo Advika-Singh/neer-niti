@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: neer-niti-api
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm run seed && npm start
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_SEED_PHONE
+        value: "9999999999"
+      - key: ADMIN_SEED_PASSWORD
+        generateValue: true
+      - key: CORS_ORIGIN
+        fromService:
+          type: web
+          name: neer-niti-web
+          property: host
+
+  - type: web
+    name: neer-niti-web
+    runtime: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: neer-niti-api
+          property: host
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

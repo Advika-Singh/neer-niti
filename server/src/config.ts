@@ -7,10 +7,14 @@ function num(name: string, fallback: number): number {
   return Number.isFinite(n) ? n : fallback;
 }
 
+function withScheme(url: string): string {
+  return /^https?:\/\//.test(url) ? url : `https://${url}`;
+}
+
 export const config = {
   port: num("PORT", 8787),
   jwtSecret: process.env.JWT_SECRET ?? "dev-secret-change-me",
-  corsOrigin: process.env.CORS_ORIGIN ?? "http://localhost:5173",
+  corsOrigin: process.env.CORS_ORIGIN ? withScheme(process.env.CORS_ORIGIN) : "http://localhost:5180",
   adminSeedPhone: process.env.ADMIN_SEED_PHONE ?? "9999999999",
   adminSeedPassword: process.env.ADMIN_SEED_PASSWORD ?? "admin1234",
   weatherCacheTtlMinutes: num("WEATHER_CACHE_TTL_MINUTES", 60),

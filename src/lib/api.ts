@@ -7,7 +7,12 @@ import type {
   SensorReading,
 } from "./types";
 
-export const API_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? "http://localhost:8787";
+function withScheme(url: string): string {
+  return /^https?:\/\//.test(url) ? url : `https://${url}`;
+}
+
+const rawApiUrl = (import.meta.env.VITE_API_URL as string | undefined) ?? "http://localhost:8787";
+export const API_URL = withScheme(rawApiUrl);
 export const WS_URL = API_URL.replace(/^http/, "ws");
 
 const TOKEN_KEY = "neer-niti-token";
