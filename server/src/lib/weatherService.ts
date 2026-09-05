@@ -1,7 +1,6 @@
 import { db } from "../db.js";
 import { config } from "../config.js";
 import { DISTRICTS } from "./districts.js";
-import type { District } from "../types.js";
 
 const ARCHIVE_URL = "https://archive-api.open-meteo.com/v1/archive";
 const YEARS_OF_HISTORY = 5;
@@ -37,14 +36,14 @@ function isoDate(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 
-async function fetchOpenMeteo(district: District): Promise<DailyRecord[]> {
+async function fetchOpenMeteo(lat: number, lon: number): Promise<DailyRecord[]> {
   const end = new Date();
   const start = new Date();
   start.setFullYear(end.getFullYear() - YEARS_OF_HISTORY, 0, 1);
 
   const params = new URLSearchParams({
-    latitude: String(district.lat),
-    longitude: String(district.lon),
+    latitude: String(lat),
+    longitude: String(lon),
     start_date: isoDate(start),
     end_date: isoDate(end),
     daily: "precipitation_sum,temperature_2m_mean,relative_humidity_2m_mean,soil_moisture_0_to_7cm_mean",
@@ -95,45 +94,54 @@ function bucketByMonth(daily: DailyRecord[]): MonthBucket[] {
   return [...map.values()];
 }
 
-function readCache(districtId: string): DistrictClimate | null {
+function readCache(cacheKey: string): DistrictClimate | null {
   const row = db
     .prepare(`SELECT payload_json, fetched_at FROM weather_cache WHERE district_id = ?`)
-    .get(districtId) as { payload_json: string; fetched_at: string } | undefined;
+    .get(cacheKey) as { payload_json: string; fetched_at: string } | undefined;
   if (!row) return null;
   const ageMinutes = (Date.now() - new Date(row.fetched_at).getTime()) / 60000;
   if (ageMinutes > config.weatherCacheTtlMinutes) return null;
   return JSON.parse(row.payload_json) as DistrictClimate;
 }
 
-function writeCache(districtId: string, climate: DistrictClimate) {
+function writeCache(cacheKey: string, climate: DistrictClimate) {
   db.prepare(
     `INSERT INTO weather_cache (district_id, payload_json, fetched_at)
      VALUES (?, ?, ?)
      ON CONFLICT(district_id) DO UPDATE SET payload_json = excluded.payload_json, fetched_at = excluded.fetched_at`
-  ).run(districtId, JSON.stringify(climate), new Date().toISOString());
+  ).run(cacheKey, JSON.stringify(climate), new Date().toISOString());
 }
 
-export async function getDistrictClimate(districtId: string): Promise<DistrictClimate> {
-  const cached = readCache(districtId);
+async function fetchAndCacheClimate(cacheKey: string, lat: number, lon: number): Promise<DistrictClimate> {
+  const cached = readCache(cacheKey);
   if (cached) return cached;
 
-  const district = DISTRICTS.find((d) => d.id === districtId);
-  if (!district) throw new Error(`Unknown district: ${districtId}`);
-
-  const daily = await fetchOpenMeteo(district);
+  const daily = await fetchOpenMeteo(lat, lon);
   const monthly = bucketByMonth(daily);
   const latest = daily.length > 0 ? daily[daily.length - 1] : null;
 
   const climate: DistrictClimate = {
-    districtId,
+    districtId: cacheKey,
     fetchedAt: new Date().toISOString(),
     daily,
     monthly,
     latest,
     source: "open-meteo",
   };
-  writeCache(districtId, climate);
+  writeCache(cacheKey, climate);
   return climate;
+}
+
+export async function getDistrictClimate(districtId: string): Promise<DistrictClimate> {
+  const district = DISTRICTS.find((d) => d.id === districtId);
+  if (!district) throw new Error(`Unknown district: ${districtId}`);
+  return fetchAndCacheClimate(districtId, district.lat, district.lon);
+}
+
+/** Ad-hoc climate lookup for any searched location, not just the 6 curated pilot districts. */
+export async function getClimateForCoords(lat: number, lon: number): Promise<DistrictClimate> {
+  const cacheKey = `geo:${lat.toFixed(2)},${lon.toFixed(2)}`;
+  return fetchAndCacheClimate(cacheKey, lat, lon);
 }
 
 export async function warmAllDistrictsClimate(): Promise<void> {

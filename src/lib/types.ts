@@ -71,6 +71,22 @@ export interface PayoutEvent {
   note: string;
 }
 
+export interface GeocodeResult {
+  name: string;
+  admin1: string | null;
+  country: string | null;
+  lat: number;
+  lon: number;
+}
+
+export interface LocationLatestReading {
+  rainfallMm: number;
+  temperatureC: number;
+  humidityPct: number;
+  soilMoisturePct: number;
+  date: string;
+}
+
 export interface NewsArticle {
   id: string;
   category: "Alert" | "Scheme" | "Advisory" | "Market" | "Research";

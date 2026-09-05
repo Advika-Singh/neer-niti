@@ -1,4 +1,4 @@
-import { getDistrictClimate, type DistrictClimate } from "./weatherService.js";
+import { getDistrictClimate, getClimateForCoords, type DistrictClimate } from "./weatherService.js";
 import { FALLBACK_BASELINES } from "./districts.js";
 import type { DroughtIndex, MonthlyRainfall, RiskLevel } from "../types.js";
 
@@ -129,8 +129,7 @@ export const FORECAST_METHOD =
   "Damped linear trend on the last 3 months of trailing 3-month SPEI, reverting toward the climatological mean " +
   "(Holt-style damping, reversion weight 0.25 at t+1 and 0.55 at t+3).";
 
-async function computeFromLiveClimate(districtId: string): Promise<DroughtIndex> {
-  const climate = await getDistrictClimate(districtId);
+function computeIndexFromClimate(climate: DistrictClimate): Omit<DroughtIndex, "districtId"> {
   const currentMonth = new Date().getMonth();
 
   const stats = statsForMonth(climate, currentMonth);
@@ -183,7 +182,6 @@ async function computeFromLiveClimate(districtId: string): Promise<DroughtIndex>
   if (drivers.length === 0) drivers.push("Rainfall, temperature and soil moisture are tracking close to the seasonal normal");
 
   return {
-    districtId,
     spi,
     spei,
     rdi,
@@ -218,11 +216,36 @@ function computeFallback(districtId: string): DroughtIndex {
 
 export async function computeDroughtIndex(districtId: string): Promise<DroughtIndex> {
   try {
-    return await computeFromLiveClimate(districtId);
+    const climate = await getDistrictClimate(districtId);
+    return { districtId, ...computeIndexFromClimate(climate) };
   } catch (err) {
     console.error(`[risk] live computation failed for ${districtId}, using fallback:`, (err as Error).message);
     return computeFallback(districtId);
   }
+}
+
+/** Same computation for any searched location — no curated fallback baseline exists, so this throws on failure. */
+export async function computeDroughtIndexForCoords(lat: number, lon: number): Promise<DroughtIndex> {
+  const climate = await getClimateForCoords(lat, lon);
+  return { districtId: "custom", ...computeIndexFromClimate(climate) };
+}
+
+export async function getMonthlyRainfallForCoords(lat: number, lon: number): Promise<MonthlyRainfall[]> {
+  const climate = await getClimateForCoords(lat, lon);
+  return buildMonthlySeries(climate);
+}
+
+export async function getLatestReadingForCoords(lat: number, lon: number) {
+  const climate = await getClimateForCoords(lat, lon);
+  const latest = climate.latest;
+  if (!latest || latest.temp === null || latest.humidity === null || latest.soil === null) return null;
+  return {
+    rainfallMm: latest.precip,
+    temperatureC: latest.temp,
+    humidityPct: latest.humidity,
+    soilMoisturePct: Math.round(latest.soil * 100),
+    date: latest.date,
+  };
 }
 
 export async function getMonthlyRainfall(districtId: string): Promise<MonthlyRainfall[]> {

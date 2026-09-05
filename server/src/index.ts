@@ -12,6 +12,8 @@ import { loansRouter, progressLoanStatuses } from "./routes/loans.js";
 import { payoutsRouter } from "./routes/payouts.js";
 import { apiKeysRouter } from "./routes/apiKeys.js";
 import { v1Router } from "./routes/v1.js";
+import { geocodeRouter } from "./routes/geocode.js";
+import { locationRouter } from "./routes/location.js";
 import { initSensorSim, stepSensors, refreshAnchor } from "./lib/sensorSim.js";
 import { warmAllDistrictsClimate } from "./lib/weatherService.js";
 import { scanAllDistrictsForPayoutTriggers } from "./lib/payoutEngine.js";
@@ -46,6 +48,8 @@ app.use("/api/loans", loansRouter);
 app.use("/api/payouts", payoutsRouter);
 app.use("/api/admin/api-keys", apiKeysRouter);
 app.use("/api/v1", v1Router);
+app.use("/api/geocode", geocodeRouter);
+app.use("/api/location", locationRouter);
 
 const server = http.createServer(app);
 attachWebSocketServer(server);

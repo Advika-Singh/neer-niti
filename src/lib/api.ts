@@ -1,6 +1,8 @@
 import type {
   DroughtIndex,
+  GeocodeResult,
   LoanApplication,
+  LocationLatestReading,
   MonthlyRainfall,
   NewsArticle,
   PayoutEvent,
@@ -169,4 +171,18 @@ export function apiCreateApiKey(ownerName: string, ownerType: ApiKeyRecord["owne
 
 export function apiRevokeApiKey(id: string) {
   return request<void>(`/api/admin/api-keys/${id}`, { method: "DELETE" });
+}
+
+export function apiGeocode(query: string) {
+  return request<GeocodeResult[]>(`/api/geocode?q=${encodeURIComponent(query)}`);
+}
+
+export function apiGetLocationRisk(lat: number, lon: number) {
+  return request<{ risk: DroughtIndex; latest: LocationLatestReading | null }>(
+    `/api/location/risk?lat=${lat}&lon=${lon}`
+  );
+}
+
+export function apiGetLocationRainfall(lat: number, lon: number) {
+  return request<MonthlyRainfall[]>(`/api/location/rainfall?lat=${lat}&lon=${lon}`);
 }

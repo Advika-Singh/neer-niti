@@ -209,6 +209,13 @@ interface Translations {
   common_loading: string;
   admin_api_issue_error: string;
   dash_forecast_method_desc: string;
+
+  location_search_placeholder: string;
+  location_search_no_results: string;
+  location_custom_note: string;
+  dash_latest_observed: string;
+  dash_snapshot_label: string;
+  common_clear: string;
 }
 
 export type TKey = keyof Translations;
@@ -427,6 +434,13 @@ const EN: Translations = {
   admin_api_issue_error: "Could not issue key",
   dash_forecast_method_desc:
     "Damped linear trend on the last 3 months of trailing 3-month SPEI, reverting toward the climatological mean (Holt-style damping, reversion weight 0.25 at t+1 and 0.55 at t+3).",
+
+  location_search_placeholder: "Search any location (e.g. Nashik, Jaipur)…",
+  location_search_no_results: "No matches found",
+  location_custom_note: "Searched location — crop and population data is only curated for the 6 pilot districts.",
+  dash_latest_observed: "Latest Observed Conditions",
+  dash_snapshot_label: "Snapshot — real data, fetched once",
+  common_clear: "Clear",
 };
 
 const HI: Translations = {
@@ -639,6 +653,13 @@ const HI: Translations = {
   admin_api_issue_error: "कुंजी जारी नहीं हो सकी",
   dash_forecast_method_desc:
     "पिछले 3 महीनों के 3-माह ट्रेलिंग SPEI पर आधारित डैम्प्ड लीनियर ट्रेंड, जलवायु औसत की ओर लौटते हुए (Holt-शैली डैम्पिंग, t+1 पर 0.25 और t+3 पर 0.55 का रिवर्जन भार)।",
+
+  location_search_placeholder: "कोई भी स्थान खोजें (जैसे नासिक, जयपुर)…",
+  location_search_no_results: "कोई मिलान नहीं मिला",
+  location_custom_note: "खोजा गया स्थान — फसल व जनसंख्या डेटा केवल 6 पायलट जिलों के लिए तैयार किया गया है।",
+  dash_latest_observed: "नवीनतम अवलोकित स्थिति",
+  dash_snapshot_label: "स्नैपशॉट — वास्तविक डेटा, एक बार प्राप्त किया गया",
+  common_clear: "साफ़ करें",
 };
 
 const TA: Translations = {
@@ -852,6 +873,13 @@ const TA: Translations = {
   admin_api_issue_error: "சாவியை வழங்க முடியவில்லை",
   dash_forecast_method_desc:
     "கடந்த 3 மாதங்களின் 3-மாத டிரெய்லிங் SPEI அடிப்படையிலான டேம்ப்டு லீனியர் ட்ரெண்ட், காலநிலை சராசரிக்குத் திரும்புகிறது (Holt-பாணி டேம்பிங், t+1 இல் 0.25 மற்றும் t+3 இல் 0.55 மறுசீரமைப்பு எடை).",
+
+  location_search_placeholder: "எந்த இடத்தையும் தேடுங்கள் (எ.கா. நாசிக், ஜெய்ப்பூர்)…",
+  location_search_no_results: "பொருத்தங்கள் இல்லை",
+  location_custom_note: "தேடப்பட்ட இடம் — பயிர் மற்றும் மக்கள்தொகை தரவு 6 முன்னோடி மாவட்டங்களுக்கு மட்டுமே தயாரிக்கப்பட்டுள்ளது.",
+  dash_latest_observed: "சமீபத்திய கவனிக்கப்பட்ட நிலை",
+  dash_snapshot_label: "ஸ்னாப்ஷாட் — உண்மையான தரவு, ஒருமுறை பெறப்பட்டது",
+  common_clear: "அழி",
 };
 
 const DICT: Record<Lang, Translations> = { en: EN, hi: HI, ta: TA };
